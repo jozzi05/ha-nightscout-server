@@ -50,7 +50,7 @@ Glucose units follow your Nightscout site settings (**mg/dL** vs **mmol/L**). Th
 | Invalid API secret | Verify the secret matches Nightscout’s configured secret for API access; restart Nightscout after changing env vars. |
 | HTTP not allowed | Use `https://` or enable **Allow insecure HTTP** for local HTTP-only URLs. |
 | Missing IOB/COB/pump fields | These depend on your uploader (e.g. AndroidAPS, Loop). If Nightscout does not receive them, sensors stay **unknown**. |
-| Cannula / sensor times missing | Not all uploaders expose these in `devicestatus`; availability varies by loop software and version. |
+| Cannula / infusion site time wrong or jumping | Prefer **Care Portal / treatments**: use **Site Change** (or similar) entries in Nightscout so we can read a stable time from `/api/v1/treatments.json`. Pump-only timestamps can be noisy or missing depending on the uploader. |
 
 ## Diagnostics
 

@@ -97,4 +97,20 @@ class NightscoutCoordinator(DataUpdateCoordinator[NightscoutData]):
         entries_list = entries_raw if isinstance(entries_raw, list) else []
         ds_list = ds_raw if isinstance(ds_raw, list) else []
 
-        return parse_nightscout_payload(status, entries_list, ds_list, profile_raw)
+        treatments_list: list = []
+        try:
+            tr_raw = await self._async_fetch_json(
+                session, "/api/v1/treatments.json?count=100"
+            )
+            treatments_list = tr_raw if isinstance(tr_raw, list) else []
+        except UpdateFailed as err:
+            err_key = err.args[0] if err.args else ""
+            if err_key == "authentication_failed":
+                raise
+            _LOGGER.debug("Nightscout treatments skipped: %s", err)
+        except Exception as err:
+            _LOGGER.debug("Nightscout treatments skipped: %s", err)
+
+        return parse_nightscout_payload(
+            status, entries_list, ds_list, profile_raw, treatments_list
+        )

@@ -145,26 +145,71 @@ def parse_reservoir(devicestatus: dict[str, Any]) -> float | None:
 
 
 def parse_cannula_timestamp(devicestatus: dict[str, Any]) -> datetime | None:
+    """Infer last infusion site change time from devicestatus pump payload.
+
+    We intentionally do **not** use generic pump.status timestamps or bolus times:
+    those update on every uplink and look like \"now\", which caused the cannula
+    sensor to drift every poll.
+    """
     pump = devicestatus.get("pump")
     if isinstance(pump, dict):
         ext = pump.get("extended")
         if isinstance(ext, dict):
             for key in ("cannulaAge", "CannulaAge", "siteAge", "SiteAge"):
                 raw = ext.get(key)
-                if isinstance(raw, (int, float)) and raw < 1e6:
+                if isinstance(raw, (int, float)) and 0 < raw < 1e6:
                     clk = parse_iso_dt(pump.get("clock"))
                     if clk:
                         return clk - timedelta(minutes=float(raw))
-            ts = ext.get("Timestamp") or ext.get("timestamp") or ext.get("lastCannulaChange")
-            dt = parse_iso_dt(ts)
-            if dt:
-                return dt
-        status = pump.get("status")
-        if isinstance(status, dict):
-            dt = parse_iso_dt(status.get("timestamp") or status.get("lastbolus"))
-            if dt:
-                return dt
+            # Explicit cannula-only fields (avoid generic Timestamp — often bolus/uplink time).
+            for key in ("lastCannulaChange", "LastCannulaChange", "cannulaTimestamp"):
+                dt = parse_iso_dt(ext.get(key))
+                if dt:
+                    return dt
     return None
+
+
+SITE_CHANGE_EVENT_TYPES = frozenset(
+    {
+        "site change",
+        "pump site change",
+        "infusion site change",
+        "cannula change",
+    }
+)
+
+
+def _treatment_event_millis(t: dict[str, Any]) -> float:
+    m = t.get("mills")
+    if isinstance(m, (int, float)):
+        return float(m)
+    for key in ("created_at", "timestamp", "dateString"):
+        dt = parse_iso_dt(t.get(key))
+        if dt:
+            return dt.timestamp() * 1000.0
+    return 0.0
+
+
+def _is_site_change_treatment(t: dict[str, Any]) -> bool:
+    et = str(t.get("eventType", "")).strip().lower()
+    if et in SITE_CHANGE_EVENT_TYPES:
+        return True
+    if "site change" in et:
+        return True
+    return False
+
+
+def latest_site_change_from_treatments(treatments: list[dict[str, Any]]) -> datetime | None:
+    """Return timestamp of the most recent Nightscout treatment that marks a site change."""
+    candidates = [t for t in treatments if isinstance(t, dict) and _is_site_change_treatment(t)]
+    if not candidates:
+        return None
+    candidates.sort(key=_treatment_event_millis, reverse=True)
+    best = candidates[0]
+    m = best.get("mills")
+    if isinstance(m, (int, float)):
+        return parse_iso_dt(m)
+    return parse_iso_dt(best.get("created_at")) or parse_iso_dt(best.get("timestamp"))
 
 
 def parse_sensor_timestamp(devicestatus: dict[str, Any]) -> datetime | None:
@@ -233,8 +278,10 @@ def parse_nightscout_payload(
     entries_list: list[dict[str, Any]],
     ds_list: list[dict[str, Any]],
     profile_raw: Any,
+    treatments_list: list[dict[str, Any]] | None = None,
 ) -> NightscoutData:
     """Build NightscoutData from raw API JSON."""
+    treatments_list = treatments_list if treatments_list is not None else []
     mmol = units_mmol(status)
     sgv_entries = first_sgv_entries(entries_list)
 
@@ -288,7 +335,9 @@ def parse_nightscout_payload(
             cob_val = cob_from_openaps(openaps)
         pump_batt = parse_pump_battery_percent(ds_row)
         reservoir = parse_reservoir(ds_row)
-        cannula_at = parse_cannula_timestamp(ds_row)
+        cannula_at = latest_site_change_from_treatments(treatments_list) or parse_cannula_timestamp(
+            ds_row
+        )
         sensor_at = parse_sensor_timestamp(ds_row)
 
     profile_name = parse_active_profile(profile_raw, status)
