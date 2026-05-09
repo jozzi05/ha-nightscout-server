@@ -155,15 +155,11 @@ class NightscoutConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         config_entry: config_entries.ConfigEntry,
     ) -> NightscoutOptionsFlow:
         """Options flow."""
-        return NightscoutOptionsFlow(config_entry)
+        return NightscoutOptionsFlow()
 
 
 class NightscoutOptionsFlow(config_entries.OptionsFlow):
     """Nightscout options."""
-
-    def __init__(self, config_entry: config_entries.ConfigEntry) -> None:
-        """Initialize options flow."""
-        self.config_entry = config_entry
 
     async def async_step_init(
         self, user_input: dict[str, Any] | None = None
