@@ -1,5 +1,11 @@
 # Nightscout connection guide
 
+## Important — not medical software
+
+This integration is **not** a health app or medical device. Glucose and pump values are shown for home automation only; they may be inaccurate or unavailable. **The author assumes no responsibility** for decisions made using this software. Read **[Disclaimer](disclaimer.md)** in full before relying on dashboards or automations.
+
+---
+
 ## What you need
 
 - A running Nightscout site you can open in a browser (hosted or self-hosted).

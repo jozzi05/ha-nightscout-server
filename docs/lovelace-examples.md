@@ -1,5 +1,11 @@
 # Lovelace examples
 
+## Disclaimer
+
+Dashboards are for convenience only. Misconfigured cards or delayed history **must not** replace proper glucose monitoring or medical advice. See **[Disclaimer](disclaimer.md)**.
+
+---
+
 These examples assume your Nightscout device title matches your site hostname and entity IDs follow the default pattern `sensor.<site>_glucose`. Replace entity IDs with **Developer tools** → **States** values from your system.
 
 ## Single glucose card with history (built-in History Graph)

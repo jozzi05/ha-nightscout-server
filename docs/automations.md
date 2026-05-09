@@ -1,11 +1,16 @@
 # Automation examples
 
-**Important:** These automations are for home convenience only. They do not replace medical alerts, pump alarms, or clinical judgment. Test safely and avoid relying solely on Home Assistant for urgent hypoglycemia or hyperglycemia detection.
+## Disclaimer — read first
+
+This integration is **not** medical software. Automations below are **examples only**. They can fail, misfire, or never run. **Do not** use Home Assistant automations as your primary safety net for hypoglycemia or hyperglycemia.
+
+**The author and contributors accept no liability** for injury, death, incorrect treatment decisions, or any damages arising from use or misuse of this software or the examples here. By copying these automations you agree you use them **entirely at your own risk**. Full legal-style terms: **[Disclaimer](disclaimer.md)**.
+
+---
 
 Replace `sensor.your_host_glucose` with your actual glucose entity from **Developer tools** → **States**.
 
 ## Notify when glucose crosses a threshold
-
 Numeric state triggers work when the glucose sensor reports a number (mg/dL or mmol/L depending on your site).
 
 Example (mg/dL — adjust thresholds for mmol/L, e.g. low below 4.0):

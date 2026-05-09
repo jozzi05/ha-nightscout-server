@@ -2,6 +2,8 @@
 
 Custom integration that connects [Home Assistant](https://www.home-assistant.io/) to your [Nightscout](https://nightscout.github.io/) site. It exposes glucose, trends, pump-related values when available, and profile information so you can build dashboards and automations (for example lighting or notifications based on glucose ranges).
 
+**Legal notice:** This is **not** a health application or medical device. It does not provide medical advice. **The author and contributors assume no responsibility or liability** for misuse, incorrect reliance on displayed values, failed automations, delayed data, or any injury or loss. Read **[docs/disclaimer.md](docs/disclaimer.md)** for the full agreement-style terms before installing.
+
 ## Installation (HACS)
 
 1. Open **HACS** in Home Assistant → **Integrations** → **⋮** → **Custom repositories**.
@@ -21,15 +23,11 @@ Detailed steps and troubleshooting: [docs/setup.md](docs/setup.md).
 
 Glucose history in Home Assistant comes from the **Glucose** sensor updating over time. Use the History Graph card or **mini-graph-card** with `hours_to_show` set to 2, 4, 12, or 24 for different windows.
 
-Examples: [docs/lovelace-examples.md](docs/lovelace-examples.md).
+Examples: [docs/lovelace-examples.md](docs/lovelace-examples.md). See also **[docs/disclaimer.md](docs/disclaimer.md)**.
 
 ## Automations
 
-Examples for lights and numeric thresholds: [docs/automations.md](docs/automations.md).
-
-## Disclaimer
-
-This integration is for convenience and home automation only. It is **not** a medical device and **not** a replacement for your CGM receiver, pump alerts, or clinician advice.
+Examples for lights and numeric thresholds: [docs/automations.md](docs/automations.md) (includes safety and liability disclaimers).
 
 ## Development / tests
 

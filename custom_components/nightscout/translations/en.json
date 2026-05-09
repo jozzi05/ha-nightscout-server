@@ -3,7 +3,7 @@
     "step": {
       "user": {
         "title": "Connect to Nightscout",
-        "description": "Enter the same base URL you use in the browser to open your Nightscout site. HTTPS is required unless you enable insecure HTTP for a local server.",
+        "description": "Not medical software — no warranty; use at your own risk. Full disclaimer in the repository docs/disclaimer.md. Enter the same base URL you use in the browser. HTTPS is required unless you enable insecure HTTP for a local server.",
         "data": {
           "url": "Nightscout URL",
           "allow_http": "Allow insecure HTTP"
