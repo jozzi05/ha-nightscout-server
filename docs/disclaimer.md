@@ -2,6 +2,15 @@
 
 This document describes limitations of the **Nightscout Home Assistant integration** (the software in this repository). By installing or using it, you acknowledge the following.
 
+## Hobby project; no guarantee of maintenance
+
+- This integration started as a **personal hobby project** for **the author’s** own Home Assistant setup.
+- **You choose to install and use it entirely on your own.** That decision is yours alone; **the author** does not solicit reliance on this software for any critical purpose.
+- **The author does not promise** ongoing development, fixes, compatibility with future Home Assistant or Nightscout versions, or timely responses to issues. The project may become **partially or fully unmaintained** at any time, temporarily or permanently, **without notice**.
+- There is **no service level**, **no support contract**, and **no obligation** to merge pull requests or publish releases.
+
+The source code is licensed under the **MIT License** (see the `LICENSE` file in the repository root). You are **explicitly encouraged** to **fork** the project, ship your own variant, fix bugs locally, or share improvements—subject only to the MIT license terms (retain copyright notice, etc.).
+
 ## This is not a health app or medical software
 
 - This project is **not** a medical device, **not** a regulated health application, and **not** intended for use in the diagnosis or treatment of any disease or medical condition.
@@ -15,19 +24,19 @@ The software is provided **“as is”**, without warranty of any kind, express 
 
 Glucose and pump-related data depend on Nightscout, your network, Home Assistant, hardware, and third-party systems. **Data may be wrong, delayed, missing, or stale.** Bugs, updates, power loss, Wi‑Fi issues, or misconfiguration can cause incorrect display or automations that do not run when expected.
 
-## Limitation of liability (author and contributors)
+## Limitation of liability (the author and contributors)
 
 To the maximum extent permitted by applicable law:
 
-- The **author(s)**, **maintainers**, and **contributors** of this repository **assume no responsibility or liability** for any use or misuse of this software.
+- **The author**, other **maintainers**, and **contributors** to this repository **assume no responsibility or liability** for any use or misuse of this software.
 - **You use this integration entirely at your own risk.**
 - **No one responsible for this project** is liable for any **direct, indirect, incidental, special, consequential, or exemplary damages**, including but not limited to:
   - Personal injury, hospitalization, or death  
-  - Hypoglycemia, hyperglymia, diabetic ketoacidosis (DKA), or any other medical outcome  
+  - Hypoglycemia, hyperglycemia, diabetic ketoacidosis (DKA), or any other medical outcome  
   - Incorrect insulin or medication decisions made in reliance on data or automations from this integration  
   - Property damage, data loss, or loss of profit  
 
-This applies even if the author or contributors have been advised of the possibility of such damages.
+This applies even if **the author** or contributors have been advised of the possibility of such damages.
 
 If you do not agree with these terms, **do not install or use** this integration.
 
@@ -47,6 +56,6 @@ Nightscout and Home Assistant may process sensitive health-related data. You are
 
 ## Summary
 
-**This integration is home-automation glue between Nightscout and Home Assistant. It is not medical software. The author does not accept responsibility for incorrect use, reliance on displayed values, or automation failures.**
+**This integration is home-automation glue between Nightscout and Home Assistant. It is not medical software. It is a hobby project with no guaranteed maintenance. The author does not accept responsibility for incorrect use, reliance on displayed values, or automation failures.** Under the MIT license you may fork and adapt the code as you wish.
 
 If you need urgent medical attention, contact emergency services or your clinician — do not rely on this software.

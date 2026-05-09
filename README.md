@@ -4,6 +4,10 @@ Custom integration that connects [Home Assistant](https://www.home-assistant.io/
 
 **Legal notice:** This is **not** a health application or medical device. It does not provide medical advice. **The author and contributors assume no responsibility or liability** for misuse, incorrect reliance on displayed values, failed automations, delayed data, or any injury or loss. Read **[docs/disclaimer.md](docs/disclaimer.md)** for the full agreement-style terms before installing.
 
+This repository is a **personal hobby project**: the author originally built it for personal use. **Anyone who installs or uses this integration does so on their own initiative and at their own risk.** There is **no commitment** that the project will stay updated, bug-free, or actively maintained; it may become **unmaintained** at any time without notice.
+
+The project is released under the **[MIT License](LICENSE)**. You are **welcome to fork** the repository and maintain your own version, adapt it for your Home Assistant setup, or redistribute changes under the same license terms.
+
 ## Installation (HACS)
 
 1. Open **HACS** in Home Assistant → **Integrations** → **⋮** → **Custom repositories**.

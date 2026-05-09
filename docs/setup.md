@@ -4,6 +4,8 @@
 
 This integration is **not** a health app or medical device. Glucose and pump values are shown for home automation only; they may be inaccurate or unavailable. **The author assumes no responsibility** for decisions made using this software. Read **[Disclaimer](disclaimer.md)** in full before relying on dashboards or automations.
 
+It is also a **hobby project** maintained **by the author** for personal use: **you install it on your own**, there is **no guarantee** it will stay maintained or updated, and it is **MIT-licensed**—you may **fork** and adapt it freely (see the repository `LICENSE`).
+
 ---
 
 ## What you need

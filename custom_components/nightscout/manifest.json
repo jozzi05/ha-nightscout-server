@@ -1,7 +1,7 @@
 {
   "domain": "nightscout",
   "name": "Nightscout",
-  "codeowners": ["@jozzi05"],
+  "codeowners": [],
   "config_flow": true,
   "documentation": "https://github.com/jozzi05/ha-nightscout-server",
   "integration_type": "device",
