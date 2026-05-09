@@ -1,0 +1,12 @@
+{
+  "domain": "nightscout",
+  "name": "Nightscout",
+  "codeowners": ["@dmalantowicz"],
+  "config_flow": true,
+  "documentation": "https://github.com/dmalantowicz/ha-nightscout-server",
+  "integration_type": "device",
+  "iot_class": "cloud_polling",
+  "issue_tracker": "https://github.com/dmalantowicz/ha-nightscout-server/issues",
+  "requirements": [],
+  "version": "1.0.0"
+}

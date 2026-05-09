@@ -1,0 +1,69 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Connect to Nightscout",
+        "description": "Enter the same base URL you use in the browser to open your Nightscout site. HTTPS is required unless you enable insecure HTTP for a local server.",
+        "data": {
+          "url": "Nightscout URL",
+          "allow_http": "Allow insecure HTTP"
+        }
+      },
+      "api_secret": {
+        "title": "API secret",
+        "description": "Only if your Nightscout requires an API secret for REST API access (same value as in your uploader or Nightscout settings). You may leave this empty.",
+        "data": {
+          "api_secret": "API secret"
+        }
+      },
+      "init": {
+        "title": "Nightscout options",
+        "data": {
+          "scan_interval": "Polling interval (seconds)"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Could not reach Nightscout. Check the URL, network, and that the site is online.",
+      "invalid_auth": "The API secret was rejected. Verify Nightscout authentication settings.",
+      "http_not_allowed": "HTTP is not allowed. Use HTTPS or enable “Allow insecure HTTP” for local URLs."
+    },
+    "abort": {
+      "already_configured": "This Nightscout site is already configured."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "glucose": {
+        "name": "Glucose"
+      },
+      "delta": {
+        "name": "Glucose delta"
+      },
+      "iob": {
+        "name": "Insulin on board"
+      },
+      "cob": {
+        "name": "Carbs on board"
+      },
+      "last_reading": {
+        "name": "Last glucose reading"
+      },
+      "active_profile": {
+        "name": "Active profile"
+      },
+      "reservoir": {
+        "name": "Insulin reservoir"
+      },
+      "pump_battery": {
+        "name": "Pump battery"
+      },
+      "cannula_changed": {
+        "name": "Cannula / infusion site"
+      },
+      "sensor_started": {
+        "name": "Sensor started"
+      }
+    }
+  }
+}
