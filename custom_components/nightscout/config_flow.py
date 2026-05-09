@@ -166,7 +166,7 @@ class NightscoutOptionsFlow(config_entries.OptionsFlow):
     ) -> FlowResult:
         """Manage options."""
         if user_input is not None:
-            return self.async_create_entry(title="", data={}, options=user_input)
+            return self.async_create_entry(data=user_input)
 
         current = self.config_entry.options.get(CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL)
 
