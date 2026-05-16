@@ -11,17 +11,18 @@ on:
         description: "Ref to release (branch, commit SHA, or tag). Empty = HEAD at trigger time."
         required: false
 
-permissions:
-  contents: write
-  pull-requests: write
+permissions: {}
 
 jobs:
   prepare:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
 
     steps:
       - name: Checkout ref to release
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           fetch-depth: 0
           fetch-tags: true
@@ -29,7 +30,7 @@ jobs:
 
       - name: Generate changelog
         id: git_cliff
-        uses: orhun/git-cliff-action@v4
+        uses: orhun/git-cliff-action@f50e11560dce63f7c33227798f90b924471a88b5 # v4.8.0
         with:
           version: v2.12.0
           config: cliff.toml
@@ -66,7 +67,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           RELEASE_BRANCH: ${{ steps.branch.outputs.name }}
-          NEW_TAG: ${{ steps.version.outputs.content }}
+          NEW_TAG: ${{ steps.git_cliff.outputs.version }}
         run: |
           new_pr_url=$(gh pr create \
             --base main \

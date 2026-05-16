@@ -10,20 +10,22 @@ on:
     branches:
       - main
 
-permissions:
-  contents: write
-  pull-requests: write
+permissions: {}
 
 jobs:
   release:
     if: >-
       github.event.pull_request.merged == true &&
-      startsWith(github.event.pull_request.head.ref, 'release/')
+      startsWith(github.event.pull_request.head.ref, 'release/') &&
+      github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
 
     steps:
       - name: Checkout main
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           ref: main
           fetch-depth: 0
@@ -72,6 +74,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NEW_TAG: ${{ steps.version.outputs.content }}
+          REPO_OWNER: ${{ github.repository_owner }}
         run: |
           existing_pr=$(gh pr list \
             --base staging \
@@ -94,6 +97,12 @@ jobs:
               --body "Back-merge after release ${NEW_TAG}.")
             pr_number=$(echo "$pr_url" | grep -o '[0-9]*$')
             echo "Created back-merge PR #${pr_number}"
+          fi
+
+          if gh pr edit "$pr_number" --add-assignee "${REPO_OWNER}"; then
+            echo "Assigned ${REPO_OWNER} to back-merge PR #${pr_number}"
+          else
+            echo "Could not assign ${REPO_OWNER} (e.g. org owner value is not a user login)."
           fi
 
           if gh pr merge "$pr_number" --auto --merge; then
