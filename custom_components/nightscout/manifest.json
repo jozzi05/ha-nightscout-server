@@ -3,6 +3,7 @@
   "name": "Nightscout",
   "codeowners": [],
   "config_flow": true,
+  "dependencies": ["frontend", "http", "lovelace"],
   "documentation": "https://github.com/jozzi05/ha-nightscout-server",
   "integration_type": "device",
   "iot_class": "cloud_polling",

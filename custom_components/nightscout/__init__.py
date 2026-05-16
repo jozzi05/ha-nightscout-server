@@ -24,7 +24,8 @@ _LOGGER = logging.getLogger(__name__)
 PLATFORMS = ["sensor"]
 
 CARD_JS = "nightscout-card.js"
-CARD_URL = f"/{DOMAIN}/{CARD_JS}"
+CARD_URL_BASE = f"/{DOMAIN}"
+CARD_URL = f"{CARD_URL_BASE}/{CARD_JS}"
 _FRONTEND_REGISTERED = False
 
 
@@ -33,8 +34,8 @@ async def async_setup(hass: HomeAssistant, config: dict[str, Any]) -> bool:
     return True
 
 
-def _register_frontend(hass: HomeAssistant) -> None:
-    """Register the Lovelace card JS resource (once per HA instance)."""
+async def _async_register_frontend(hass: HomeAssistant) -> None:
+    """Register the Lovelace card JS as a static path and Lovelace resource."""
     global _FRONTEND_REGISTERED  # noqa: PLW0603
     if _FRONTEND_REGISTERED:
         return
@@ -46,9 +47,31 @@ def _register_frontend(hass: HomeAssistant) -> None:
 
     hass.http.register_static_path(CARD_URL, str(js_path), cache_headers=False)
 
-    from homeassistant.components.frontend import add_extra_js_url
+    import json
 
-    add_extra_js_url(hass, CARD_URL)
+    manifest_path = Path(__file__).parent / "manifest.json"
+    version = json.loads(manifest_path.read_text()).get("version", "0.0.0")
+    url_with_version = f"{CARD_URL}?v={version}"
+
+    lovelace = hass.data.get("lovelace")
+    if lovelace and hasattr(lovelace, "resources"):
+        resources = lovelace.resources
+        if hasattr(resources, "async_load") and not resources.loaded:
+            await resources.async_load()
+        existing = [
+            r for r in resources.async_items()
+            if r.get("url", "").startswith(CARD_URL)
+        ]
+        if existing:
+            resource = existing[0]
+            if resource.get("url") != url_with_version:
+                await resources.async_update_item(
+                    resource["id"], {"url": url_with_version}
+                )
+        else:
+            await resources.async_create_item(
+                {"res_type": "module", "url": url_with_version}
+            )
 
     _FRONTEND_REGISTERED = True
     _LOGGER.debug("Registered Nightscout card at %s", CARD_URL)
@@ -58,7 +81,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Set up Nightscout from a config entry."""
     from .coordinator import NightscoutCoordinator
 
-    _register_frontend(hass)
+    await _async_register_frontend(hass)
 
     scan_interval = entry.options.get(CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL)
     coordinator = NightscoutCoordinator(
