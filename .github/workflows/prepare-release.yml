@@ -1,0 +1,93 @@
+name: Prepare release
+
+concurrency:
+  group: prepare-release
+  cancel-in-progress: true
+
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: "Ref to release (branch, commit SHA, or tag). Empty = HEAD at trigger time."
+        required: false
+
+permissions: {}
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout ref to release
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+          ref: ${{ github.event.inputs.ref || github.sha }}
+
+      - name: Generate changelog
+        id: git_cliff
+        uses: orhun/git-cliff-action@f50e11560dce63f7c33227798f90b924471a88b5 # v4.8.0
+        with:
+          version: v2.12.0
+          config: cliff.toml
+          args: --bump --unreleased --strip header
+        env:
+          OUTPUT: changelog.md
+          GITHUB_REPO: ${{ github.repository }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Fail if there is nothing to release
+        run: |
+          if [ ! -s changelog.md ]; then
+            echo "No new commits since previous tag. Nothing to release."
+            exit 1
+          fi
+
+      - name: Create release branch
+        id: branch
+        run: |
+          ts=$(date -u +"%Y%m%d-%H%M%S")
+          branch="release/${ts}"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout -b "$branch"
+          echo "name=${branch}" >> "$GITHUB_OUTPUT"
+
+      - name: Merge main into release branch
+        run: |
+          git fetch origin main
+          git merge origin/main --no-edit
+          git push -u origin HEAD
+
+      - name: Create release PR and close previous ones
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_BRANCH: ${{ steps.branch.outputs.name }}
+          NEW_TAG: ${{ steps.git_cliff.outputs.version }}
+          LAUNCHED_BY: ${{ github.triggering_actor }}
+        run: |
+          new_pr_url=$(gh pr create \
+            --base main \
+            --head "${RELEASE_BRANCH}" \
+            --title "chore(release): ${NEW_TAG}" \
+            --body-file changelog.md \
+            --assignee "${LAUNCHED_BY}")
+          
+          new_pr_number="${new_pr_url##*/}"
+          echo "Created release PR #${new_pr_number}"
+
+          old_prs=$(gh pr list \
+            --base main \
+            --state open \
+            --json number,headRefName \
+            --jq '.[] | select(.headRefName | startswith("release/")) | select(.number != '"${new_pr_number}"') | .number')
+
+          for pr in $old_prs; do
+            echo "Closing previous release PR #${pr} in favour of #${new_pr_number}"
+            gh pr comment "$pr" --body "Closing in favour of #${new_pr_number}."
+            gh pr close "$pr" --delete-branch
+          done
