@@ -45,6 +45,11 @@ def _register_frontend(hass: HomeAssistant) -> None:
         return
 
     hass.http.register_static_path(CARD_URL, str(js_path), cache_headers=False)
+
+    from homeassistant.components.frontend import add_extra_js_url
+
+    add_extra_js_url(hass, CARD_URL)
+
     _FRONTEND_REGISTERED = True
     _LOGGER.debug("Registered Nightscout card at %s", CARD_URL)
 
