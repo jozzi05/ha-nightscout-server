@@ -1,0 +1,114 @@
+name: Publish release
+
+concurrency:
+  group: publish-release
+  cancel-in-progress: false
+
+on:
+  pull_request:
+    types: [closed]
+    branches:
+      - main
+
+permissions: {}
+
+jobs:
+  release:
+    if: >-
+      github.event.pull_request.merged == true &&
+      startsWith(github.event.pull_request.head.ref, 'release/') &&
+      github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Extract version from PR title
+        id: version
+        run: |
+          title=$(jq -r '.pull_request.title' "$GITHUB_EVENT_PATH")
+          version=$(echo "$title" | grep -oE 'v[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9.]+)?')
+          if [ -z "$version" ]; then
+            echo "::error::Could not extract version from PR title: $title"
+            exit 1
+          fi
+          echo "content=${version}" >> "$GITHUB_OUTPUT"
+
+      - name: Extract changelog from PR body
+        run: |
+          jq -r '.pull_request.body // "See PR for details."' "$GITHUB_EVENT_PATH" > changelog.md
+
+      - name: Create and push tag
+        run: |
+          version="${{ steps.version.outputs.content }}"
+          if git rev-parse "$version" >/dev/null 2>&1; then
+            echo "Tag $version already exists. Skipping."
+          else
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git tag "$version"
+            git push origin "$version"
+          fi
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERSION: ${{ steps.version.outputs.content }}
+        run: |
+          tag="${VERSION}"
+          if gh release view "${tag}" >/dev/null 2>&1; then
+            echo "Release for tag ${tag} already exists; updating title, notes, and latest."
+            gh release edit "${tag}" --title "${tag}" --notes-file changelog.md --latest
+          else
+            gh release create "${tag}" --title "${tag}" --notes-file changelog.md --latest
+          fi
+
+      - name: Back-merge main into staging
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NEW_TAG: ${{ steps.version.outputs.content }}
+          REPO_OWNER: ${{ github.repository_owner }}
+        run: |
+          existing_pr=$(gh pr list \
+            --base staging \
+            --head main \
+            --state open \
+            --json number \
+            --jq '.[0].number // empty')
+
+          if [ -n "$existing_pr" ]; then
+            gh pr edit "$existing_pr" \
+              --title "chore(back-merge): main into staging" \
+              --body "Back-merge after release ${NEW_TAG}."
+            pr_number="$existing_pr"
+            echo "Updated existing back-merge PR #${pr_number}"
+          else
+            pr_url=$(gh pr create \
+              --base staging \
+              --head main \
+              --title "chore(back-merge): main into staging" \
+              --body "Back-merge after release ${NEW_TAG}.")
+            pr_number=$(echo "$pr_url" | grep -o '[0-9]*$')
+            echo "Created back-merge PR #${pr_number}"
+          fi
+
+          if gh pr edit "$pr_number" --add-assignee "${REPO_OWNER}"; then
+            echo "Assigned ${REPO_OWNER} to back-merge PR #${pr_number}"
+          else
+            echo "Could not assign ${REPO_OWNER} (e.g. org owner value is not a user login)."
+          fi
+
+          if gh pr merge "$pr_number" --auto --merge; then
+            echo "Enabled auto-merge for PR #${pr_number}"
+          elif gh pr merge "$pr_number" --merge; then
+            echo "Merged back-merge PR #${pr_number}"
+          else
+            echo "Could not enable auto-merge or merge (e.g. PR has failing checks or branch protection). Merge PR #${pr_number} manually when ready."
+          fi
