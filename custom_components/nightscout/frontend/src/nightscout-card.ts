@@ -84,7 +84,9 @@ export class NightscoutCard extends LitElement {
     this._prevGlucose = currentVal;
   }
 
-  private _triggerBlink(glucoseState: { state: string; attributes: Record<string, unknown> } | undefined) {
+  private _triggerBlink(
+    glucoseState: { state: string; attributes: Record<string, unknown> } | undefined,
+  ) {
     if (!glucoseState) return;
     const rawMgdl = glucoseState.attributes.raw_mgdl as number | undefined;
     if (rawMgdl == null) return;
@@ -124,7 +126,9 @@ export class NightscoutCard extends LitElement {
 
   render() {
     if (!this._config || !this.hass) {
-      return html`<ha-card><div class="ns-not-available">Nightscout card not configured</div></ha-card>`;
+      return html`<ha-card
+        ><div class="ns-not-available">Nightscout card not configured</div></ha-card
+      >`;
     }
 
     const c = this._config;
@@ -132,11 +136,13 @@ export class NightscoutCard extends LitElement {
     const deltaState = c.delta_entity ? this.hass.states[c.delta_entity] : undefined;
     const iobState = c.iob_entity ? this.hass.states[c.iob_entity] : undefined;
     const cobState = c.cob_entity ? this.hass.states[c.cob_entity] : undefined;
-    const lastReadingState = c.last_reading_entity ? this.hass.states[c.last_reading_entity] : undefined;
+    const lastReadingState = c.last_reading_entity
+      ? this.hass.states[c.last_reading_entity]
+      : undefined;
 
     const glucoseVal = glucoseState?.state;
     const direction = glucoseState?.attributes.direction as string | undefined;
-    const arrow = direction ? DIRECTION_ARROWS[direction] ?? direction : "";
+    const arrow = direction ? (DIRECTION_ARROWS[direction] ?? direction) : "";
     const deltaVal = deltaState?.state;
     const deltaUnit = deltaState?.attributes.unit_of_measurement as string | undefined;
     const iobVal = iobState?.state;
@@ -156,23 +162,42 @@ export class NightscoutCard extends LitElement {
       <ha-card style="${bgStyle}">
         <div class="ns-row">
           ${c.show_glucose && glucoseVal != null
-            ? html`<span class="ns-glucose" style="font-size:${fontSize}px; color:${valueColor ?? "inherit"}">${glucoseVal}</span>`
+            ? html`<span
+                class="ns-glucose"
+                style="font-size:${fontSize}px; color:${valueColor ?? "inherit"}"
+                >${glucoseVal}</span
+              >`
             : nothing}
           ${c.show_glucose && arrow
-            ? html`<span class="ns-arrow" style="font-size:${Math.round(fontSize * 0.6)}px; color:${valueColor ?? "inherit"}">${arrow}</span>`
+            ? html`<span
+                class="ns-arrow"
+                style="font-size:${Math.round(fontSize * 0.6)}px; color:${valueColor ?? "inherit"}"
+                >${arrow}</span
+              >`
             : nothing}
           ${c.show_delta && deltaVal != null
-            ? html`<span class="ns-secondary" style="font-size:${secondarySize}px">Δ ${Number(deltaVal) >= 0 ? "+" : ""}${deltaVal}${deltaUnit ? ` ${deltaUnit}` : ""}</span>`
+            ? html`<span class="ns-secondary" style="font-size:${secondarySize}px"
+                >Δ
+                ${Number(deltaVal) >= 0 ? "+" : ""}${deltaVal}${deltaUnit
+                  ? ` ${deltaUnit}`
+                  : ""}</span
+              >`
             : nothing}
           ${c.show_iob && iobVal != null
-            ? html`<span class="ns-secondary" style="font-size:${secondarySize}px"><span class="ns-label">IOB</span>${iobVal}</span>`
+            ? html`<span class="ns-secondary" style="font-size:${secondarySize}px"
+                ><span class="ns-label">IOB</span>${iobVal}</span
+              >`
             : nothing}
           ${c.show_cob && cobVal != null
-            ? html`<span class="ns-secondary" style="font-size:${secondarySize}px"><span class="ns-label">COB</span>${cobVal}</span>`
+            ? html`<span class="ns-secondary" style="font-size:${secondarySize}px"
+                ><span class="ns-label">COB</span>${cobVal}</span
+              >`
             : nothing}
         </div>
         ${c.show_time_ago && lastReadingState
-          ? html`<div class="ns-time-ago" style="font-size:${timeAgoSize}px">${formatTimeAgo(lastReadingState.state)}</div>`
+          ? html`<div class="ns-time-ago" style="font-size:${timeAgoSize}px">
+              ${formatTimeAgo(lastReadingState.state)}
+            </div>`
           : nothing}
       </ha-card>
     `;

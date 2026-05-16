@@ -99,19 +99,61 @@ function t(t,e,s,i){var o,n=arguments.length,r=n<3?e:null===i?i=Object.getOwnPro
 
         <div class="section-title">Glucose ranges (mg/dL)</div>
         <div class="row">
-          <label>Urgent low <input type="number" .value=${String(t.urgent_low)} @change=${t=>this._numberChanged("urgent_low",t)} /></label>
-          <label>Low <input type="number" .value=${String(t.low)} @change=${t=>this._numberChanged("low",t)} /></label>
+          <label
+            >Urgent low
+            <input
+              type="number"
+              .value=${String(t.urgent_low)}
+              @change=${t=>this._numberChanged("urgent_low",t)}
+          /></label>
+          <label
+            >Low
+            <input
+              type="number"
+              .value=${String(t.low)}
+              @change=${t=>this._numberChanged("low",t)}
+          /></label>
         </div>
         <div class="row">
-          <label>High <input type="number" .value=${String(t.high)} @change=${t=>this._numberChanged("high",t)} /></label>
-          <label>Urgent high <input type="number" .value=${String(t.urgent_high)} @change=${t=>this._numberChanged("urgent_high",t)} /></label>
+          <label
+            >High
+            <input
+              type="number"
+              .value=${String(t.high)}
+              @change=${t=>this._numberChanged("high",t)}
+          /></label>
+          <label
+            >Urgent high
+            <input
+              type="number"
+              .value=${String(t.urgent_high)}
+              @change=${t=>this._numberChanged("urgent_high",t)}
+          /></label>
         </div>
 
         <div class="section-title">Colors</div>
         <div class="row">
-          <label>Urgent <input type="color" .value=${t.color_urgent} @input=${t=>this._colorChanged("color_urgent",t)} /></label>
-          <label>Warning <input type="color" .value=${t.color_warning} @input=${t=>this._colorChanged("color_warning",t)} /></label>
-          <label>OK <input type="color" .value=${t.color_ok} @input=${t=>this._colorChanged("color_ok",t)} /></label>
+          <label
+            >Urgent
+            <input
+              type="color"
+              .value=${t.color_urgent}
+              @input=${t=>this._colorChanged("color_urgent",t)}
+          /></label>
+          <label
+            >Warning
+            <input
+              type="color"
+              .value=${t.color_warning}
+              @input=${t=>this._colorChanged("color_warning",t)}
+          /></label>
+          <label
+            >OK
+            <input
+              type="color"
+              .value=${t.color_ok}
+              @input=${t=>this._colorChanged("color_ok",t)}
+          /></label>
         </div>
 
         <div class="section-title">Entity overrides</div>
@@ -186,15 +228,34 @@ function t(t,e,s,i){var o,n=arguments.length,r=n<3?e:null===i?i=Object.getOwnPro
       background: var(--card-background-color, #fff);
       color: var(--primary-text-color, #000);
     }
-  `,t([pt({attribute:!1})],$t.prototype,"hass",void 0),t([ut()],$t.prototype,"_config",void 0),$t=t([ht("nightscout-card-editor")],$t);const yt={DoubleUp:"⇈",SingleUp:"↑",FortyFiveUp:"↗",Flat:"→",FortyFiveDown:"↘",SingleDown:"↓",DoubleDown:"⇊","NOT COMPUTABLE":"?","RATE OUT OF RANGE":"⚠"};let vt=class extends at{constructor(){super(...arguments),this._blinking=!1,this._prevGlucose=null,this._now=Date.now()}static getConfigElement(){return document.createElement("nightscout-card-editor")}static getStubConfig(){return{...gt}}setConfig(t){this._config={...gt,...t}}getCardSize(){return 2}connectedCallback(){super.connectedCallback(),this._timeAgoInterval=setInterval(()=>{this._now=Date.now()},15e3)}disconnectedCallback(){super.disconnectedCallback(),this._timeAgoInterval&&clearInterval(this._timeAgoInterval),this._blinkTimeout&&clearTimeout(this._blinkTimeout)}updated(t){if(super.updated(t),!t.has("hass")||!this._config?.glucose_entity)return;const e=this.hass?.states[this._config.glucose_entity],s=e?.state??null;null!==this._prevGlucose&&s!==this._prevGlucose&&this._triggerBlink(e),this._prevGlucose=s}_triggerBlink(t){if(!t)return;const e=t.attributes.raw_mgdl;if(null==e)return;const s=this._getGlucoseColor(e),i=this.shadowRoot?.querySelector("ha-card");i&&(this._blinkTimeout&&clearTimeout(this._blinkTimeout),i.style.setProperty("--blink-color",s),i.classList.remove("blink"),i.offsetWidth,i.classList.add("blink"),this._blinking=!0,this._blinkTimeout=setTimeout(()=>{i.classList.remove("blink"),this._blinking=!1},2e3))}_getGlucoseColor(t){const e=this._config;return t<e.urgent_low||t>e.urgent_high?e.color_urgent:t<e.low||t>e.high?e.color_warning:e.color_ok}_getValueColor(){if(!this._config?.glucose_entity)return;const t=this.hass?.states[this._config.glucose_entity];if(!t)return;const e=t.attributes.raw_mgdl;return null!=e?this._getGlucoseColor(e):void 0}render(){if(!this._config||!this.hass)return W`<ha-card><div class="ns-not-available">Nightscout card not configured</div></ha-card>`;const t=this._config,e=t.glucose_entity?this.hass.states[t.glucose_entity]:void 0,s=t.delta_entity?this.hass.states[t.delta_entity]:void 0,i=t.iob_entity?this.hass.states[t.iob_entity]:void 0,o=t.cob_entity?this.hass.states[t.cob_entity]:void 0,n=t.last_reading_entity?this.hass.states[t.last_reading_entity]:void 0,r=e?.state,a=e?.attributes.direction,l=a?yt[a]??a:"",h=s?.state,c=s?.attributes.unit_of_measurement,d=i?.state,p=o?.state,u=this._getValueColor(),_=t.font_size,g=Math.round(.45*_),f=Math.round(.35*_),$=t.background_color?`background-color: ${t.background_color}`:"";return this._now,W`
+  `,t([pt({attribute:!1})],$t.prototype,"hass",void 0),t([ut()],$t.prototype,"_config",void 0),$t=t([ht("nightscout-card-editor")],$t);const yt={DoubleUp:"⇈",SingleUp:"↑",FortyFiveUp:"↗",Flat:"→",FortyFiveDown:"↘",SingleDown:"↓",DoubleDown:"⇊","NOT COMPUTABLE":"?","RATE OUT OF RANGE":"⚠"};let vt=class extends at{constructor(){super(...arguments),this._blinking=!1,this._prevGlucose=null,this._now=Date.now()}static getConfigElement(){return document.createElement("nightscout-card-editor")}static getStubConfig(){return{...gt}}setConfig(t){this._config={...gt,...t}}getCardSize(){return 2}connectedCallback(){super.connectedCallback(),this._timeAgoInterval=setInterval(()=>{this._now=Date.now()},15e3)}disconnectedCallback(){super.disconnectedCallback(),this._timeAgoInterval&&clearInterval(this._timeAgoInterval),this._blinkTimeout&&clearTimeout(this._blinkTimeout)}updated(t){if(super.updated(t),!t.has("hass")||!this._config?.glucose_entity)return;const e=this.hass?.states[this._config.glucose_entity],s=e?.state??null;null!==this._prevGlucose&&s!==this._prevGlucose&&this._triggerBlink(e),this._prevGlucose=s}_triggerBlink(t){if(!t)return;const e=t.attributes.raw_mgdl;if(null==e)return;const s=this._getGlucoseColor(e),i=this.shadowRoot?.querySelector("ha-card");i&&(this._blinkTimeout&&clearTimeout(this._blinkTimeout),i.style.setProperty("--blink-color",s),i.classList.remove("blink"),i.offsetWidth,i.classList.add("blink"),this._blinking=!0,this._blinkTimeout=setTimeout(()=>{i.classList.remove("blink"),this._blinking=!1},2e3))}_getGlucoseColor(t){const e=this._config;return t<e.urgent_low||t>e.urgent_high?e.color_urgent:t<e.low||t>e.high?e.color_warning:e.color_ok}_getValueColor(){if(!this._config?.glucose_entity)return;const t=this.hass?.states[this._config.glucose_entity];if(!t)return;const e=t.attributes.raw_mgdl;return null!=e?this._getGlucoseColor(e):void 0}render(){if(!this._config||!this.hass)return W`<ha-card
+        ><div class="ns-not-available">Nightscout card not configured</div></ha-card
+      >`;const t=this._config,e=t.glucose_entity?this.hass.states[t.glucose_entity]:void 0,s=t.delta_entity?this.hass.states[t.delta_entity]:void 0,i=t.iob_entity?this.hass.states[t.iob_entity]:void 0,o=t.cob_entity?this.hass.states[t.cob_entity]:void 0,n=t.last_reading_entity?this.hass.states[t.last_reading_entity]:void 0,r=e?.state,a=e?.attributes.direction,l=a?yt[a]??a:"",h=s?.state,c=s?.attributes.unit_of_measurement,d=i?.state,p=o?.state,u=this._getValueColor(),_=t.font_size,g=Math.round(.45*_),f=Math.round(.35*_),$=t.background_color?`background-color: ${t.background_color}`:"";return this._now,W`
       <ha-card style="${$}">
         <div class="ns-row">
-          ${t.show_glucose&&null!=r?W`<span class="ns-glucose" style="font-size:${_}px; color:${u??"inherit"}">${r}</span>`:V}
-          ${t.show_glucose&&l?W`<span class="ns-arrow" style="font-size:${Math.round(.6*_)}px; color:${u??"inherit"}">${l}</span>`:V}
-          ${t.show_delta&&null!=h?W`<span class="ns-secondary" style="font-size:${g}px">Δ ${Number(h)>=0?"+":""}${h}${c?` ${c}`:""}</span>`:V}
-          ${t.show_iob&&null!=d?W`<span class="ns-secondary" style="font-size:${g}px"><span class="ns-label">IOB</span>${d}</span>`:V}
-          ${t.show_cob&&null!=p?W`<span class="ns-secondary" style="font-size:${g}px"><span class="ns-label">COB</span>${p}</span>`:V}
+          ${t.show_glucose&&null!=r?W`<span
+                class="ns-glucose"
+                style="font-size:${_}px; color:${u??"inherit"}"
+                >${r}</span
+              >`:V}
+          ${t.show_glucose&&l?W`<span
+                class="ns-arrow"
+                style="font-size:${Math.round(.6*_)}px; color:${u??"inherit"}"
+                >${l}</span
+              >`:V}
+          ${t.show_delta&&null!=h?W`<span class="ns-secondary" style="font-size:${g}px"
+                >Δ
+                ${Number(h)>=0?"+":""}${h}${c?` ${c}`:""}</span
+              >`:V}
+          ${t.show_iob&&null!=d?W`<span class="ns-secondary" style="font-size:${g}px"
+                ><span class="ns-label">IOB</span>${d}</span
+              >`:V}
+          ${t.show_cob&&null!=p?W`<span class="ns-secondary" style="font-size:${g}px"
+                ><span class="ns-label">COB</span>${p}</span
+              >`:V}
         </div>
-        ${t.show_time_ago&&n?W`<div class="ns-time-ago" style="font-size:${f}px">${function(t){const e=new Date(t).getTime(),s=Date.now()-e;if(s<0)return"just now";const i=Math.floor(s/6e4);if(i<1)return"just now";if(1===i)return"1 min ago";if(i<60)return`${i} min ago`;const o=Math.floor(i/60);return 1===o?"1 hour ago":`${o} hours ago`}(n.state)}</div>`:V}
+        ${t.show_time_ago&&n?W`<div class="ns-time-ago" style="font-size:${f}px">
+              ${function(t){const e=new Date(t).getTime(),s=Date.now()-e;if(s<0)return"just now";const i=Math.floor(s/6e4);if(i<1)return"just now";if(1===i)return"1 min ago";if(i<60)return`${i} min ago`;const o=Math.floor(i/60);return 1===o?"1 hour ago":`${o} hours ago`}(n.state)}
+            </div>`:V}
       </ha-card>
     `}};vt.styles=_t,t([pt({attribute:!1})],vt.prototype,"hass",void 0),t([ut()],vt.prototype,"_config",void 0),t([ut()],vt.prototype,"_blinking",void 0),t([ut()],vt.prototype,"_now",void 0),vt=t([ht("nightscout-card")],vt);const bt=window;bt.customCards=bt.customCards||[],bt.customCards.push({type:"nightscout-card",name:"Nightscout",description:"Glucose monitoring card for Nightscout"});export{vt as NightscoutCard};
