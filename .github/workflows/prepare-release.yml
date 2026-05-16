@@ -68,13 +68,15 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           RELEASE_BRANCH: ${{ steps.branch.outputs.name }}
           NEW_TAG: ${{ steps.git_cliff.outputs.version }}
+          LAUNCHED_BY: ${{ github.triggering_actor }}
         run: |
           new_pr_url=$(gh pr create \
             --base main \
             --head "${RELEASE_BRANCH}" \
             --title "chore(release): ${NEW_TAG}" \
-            --body-file changelog.md)
-
+            --body-file changelog.md \
+            --assignee "${LAUNCHED_BY}")
+          
           new_pr_number="${new_pr_url##*/}"
           echo "Created release PR #${new_pr_number}"
 
