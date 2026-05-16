@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from datetime import timedelta
 import logging
+from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
 from .const import (
@@ -22,15 +23,37 @@ _LOGGER = logging.getLogger(__name__)
 
 PLATFORMS = ["sensor"]
 
+CARD_JS = "nightscout-card.js"
+CARD_URL = f"/{DOMAIN}/{CARD_JS}"
+_FRONTEND_REGISTERED = False
+
 
 async def async_setup(hass: HomeAssistant, config: dict[str, Any]) -> bool:
     """Set up Nightscout."""
     return True
 
 
+def _register_frontend(hass: HomeAssistant) -> None:
+    """Register the Lovelace card JS resource (once per HA instance)."""
+    global _FRONTEND_REGISTERED  # noqa: PLW0603
+    if _FRONTEND_REGISTERED:
+        return
+
+    js_path = Path(__file__).parent / CARD_JS
+    if not js_path.is_file():
+        _LOGGER.debug("Nightscout card JS not found at %s, skipping", js_path)
+        return
+
+    hass.http.register_static_path(CARD_URL, str(js_path), cache_headers=False)
+    _FRONTEND_REGISTERED = True
+    _LOGGER.debug("Registered Nightscout card at %s", CARD_URL)
+
+
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Set up Nightscout from a config entry."""
     from .coordinator import NightscoutCoordinator
+
+    _register_frontend(hass)
 
     scan_interval = entry.options.get(CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL)
     coordinator = NightscoutCoordinator(

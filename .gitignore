@@ -5,3 +5,8 @@ __pycache__/
 .ruff_cache/
 .mypy_cache/
 tmp/
+.cursor
+
+# Frontend build tooling
+custom_components/nightscout/frontend/node_modules/
+custom_components/nightscout/frontend/dist/
