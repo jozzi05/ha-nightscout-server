@@ -3,32 +3,7 @@ import { customElement, property, state } from "lit/decorators.js";
 import { cardStyles } from "./styles.js";
 import type { NightscoutCardConfig, HomeAssistant } from "./types.js";
 import { DEFAULT_CONFIG } from "./types.js";
-
-const DIRECTION_ARROWS: Record<string, string> = {
-  DoubleUp: "⇈",
-  SingleUp: "↑",
-  FortyFiveUp: "↗",
-  Flat: "→",
-  FortyFiveDown: "↘",
-  SingleDown: "↓",
-  DoubleDown: "⇊",
-  "NOT COMPUTABLE": "?",
-  "RATE OUT OF RANGE": "⚠",
-};
-
-function formatTimeAgo(isoString: string): string {
-  const then = new Date(isoString).getTime();
-  const now = Date.now();
-  const diffMs = now - then;
-  if (diffMs < 0) return "just now";
-  const mins = Math.floor(diffMs / 60000);
-  if (mins < 1) return "just now";
-  if (mins === 1) return "1 min ago";
-  if (mins < 60) return `${mins} min ago`;
-  const hrs = Math.floor(mins / 60);
-  if (hrs === 1) return "1 hour ago";
-  return `${hrs} hours ago`;
-}
+import { DIRECTION_ARROWS, formatTimeAgo, getGlucoseColor } from "./utils.js";
 
 @customElement("nightscout-card")
 export class NightscoutCard extends LitElement {
@@ -109,10 +84,7 @@ export class NightscoutCard extends LitElement {
   }
 
   private _getGlucoseColor(rawMgdl: number): string {
-    const c = this._config;
-    if (rawMgdl < c.urgent_low || rawMgdl > c.urgent_high) return c.color_urgent;
-    if (rawMgdl < c.low || rawMgdl > c.high) return c.color_warning;
-    return c.color_ok;
+    return getGlucoseColor(rawMgdl, this._config);
   }
 
   private _getValueColor(): string | undefined {
