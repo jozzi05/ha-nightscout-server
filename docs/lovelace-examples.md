@@ -8,6 +8,60 @@ Dashboards are for convenience only. Misconfigured cards or delayed history **mu
 
 These examples assume your Nightscout device title matches your site hostname and entity IDs follow the default pattern `sensor.<site>_glucose`. Replace entity IDs with **Developer tools** → **States** values from your system.
 
+## Nightscout card (built-in custom card)
+
+The integration ships a custom card that displays glucose, trend arrow, delta, IOB, and COB in a single compact row. It includes a visual editor -- add the card via the UI and select your Nightscout device; all entities are auto-filled.
+
+### Adding via UI
+
+1. Open a dashboard and click **Edit** → **Add Card**.
+2. Search for **Nightscout** in the card picker.
+3. Select your Nightscout device -- entities are auto-filled.
+4. Toggle which fields to show and adjust font size.
+
+### Adding via YAML
+
+```yaml
+type: custom:nightscout-card
+glucose_entity: sensor.your_host_glucose
+delta_entity: sensor.your_host_delta
+iob_entity: sensor.your_host_iob
+cob_entity: sensor.your_host_cob
+last_reading_entity: sensor.your_host_last_reading
+show_glucose: true
+show_time_ago: true
+show_delta: true
+show_iob: true
+show_cob: true
+font_size: 48
+```
+
+### Glucose range colors and blink
+
+When the glucose value changes, the card border flashes for 2 seconds with a color based on configurable ranges (mg/dL):
+
+| Range | Default | Color |
+|-------|---------|-------|
+| Urgent low / high | < 70 or > 200 | Red (`#e74c3c`) |
+| Low / high | < 85 or > 170 | Yellow (`#f39c12`) |
+| In range | 85 -- 170 | Green (`#2ecc71`) |
+
+Override ranges and colors in the visual editor or YAML:
+
+```yaml
+urgent_low: 70
+urgent_high: 200
+low: 85
+high: 170
+color_urgent: "#e74c3c"
+color_warning: "#f39c12"
+color_ok: "#2ecc71"
+```
+
+The card automatically follows your HA dark/light theme. Optionally set `background_color` to override.
+
+---
+
 ## Single glucose card with history (built-in History Graph)
 
 Shows glucose over a selectable window using entity history:

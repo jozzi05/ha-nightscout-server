@@ -25,7 +25,7 @@ tests/                          # pytest (parsers, url; config flow if HA instal
 hacs.json                       # HACS metadata (min HA 2024.1.0)
 ```
 
-No `frontend/` or Lovelace custom card in-tree yet; dashboards use standard HA cards (see `docs/lovelace-examples.md`).
+`custom_components/nightscout/frontend/` — Lit Lovelace card (`nightscout-card.js`); see `docs/lovelace-examples.md`.
 
 ## Architecture
 
@@ -49,9 +49,27 @@ pip install -r requirements_test.txt
 pytest
 ```
 
+```bash
+cd custom_components/nightscout/frontend
+npm ci
+npm run lint && npm run format:check && npm test
+```
+
 - **Python 3.11+** and **Home Assistant ≥ 2024.1.0** for full test suite (`tests/test_validate_input.py` skips without HA).
+- **Frontend:** Vitest unit tests (`src/**/*.test.ts`) and browser component tests (`src/**/*.browser.test.ts`) via Vitest browser mode + Playwright.
 - `parsers.py` and `url.py` are intentionally **HA-free** — prefer unit tests there for parsing/URL logic.
 - Bump **`manifest.json` `version`** when releasing; tags drive GitHub release workflows (`.github/workflows/prepare-release.yml`, `publish-release.yml`).
+
+## CI and branch protection
+
+GitHub Actions workflow [`.github/workflows/ci.yml`](.github/workflows/ci.yml) runs on every **push** and **pull_request**:
+
+| Job | What it runs |
+|-----|----------------|
+| `python` | `pytest` (requires `homeassistant` from `requirements_test.txt`) |
+| `frontend` | `npm run lint`, `npm run format:check`, `npm test` (unit + Playwright browser tests) |
+
+To block merges when CI fails, configure **branch protection** on `main` (and `staging` if used): Settings → Branches → require status checks **`python`** and **`frontend`**.
 
 ## Conventions for agents
 
