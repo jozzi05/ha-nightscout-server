@@ -23,6 +23,12 @@ const VISIBLE_FIELDS = [
   ["show_cob", "COB"],
 ] as const;
 
+type VisibleFieldKey = (typeof VISIBLE_FIELDS)[number][0];
+type NumberFieldKey = "font_size" | "urgent_low" | "urgent_high" | "low" | "high";
+type ColorFieldKey = "color_urgent" | "color_warning" | "color_ok";
+type EntityFieldKey = `${(typeof ENTITY_KEYS)[number]}_entity`;
+type TextFieldKey = EntityFieldKey | "background_color";
+
 type NightscoutSite = { deviceId: string; label: string };
 
 @customElement("nightscout-card-editor")
@@ -134,7 +140,13 @@ export class NightscoutCardEditor extends LitElement {
 
   private async _deviceChanged(e: Event) {
     const deviceId = (e.target as HTMLSelectElement).value;
-    this._config = { ...this._config, device_id: deviceId || undefined };
+    const next = { ...this._config };
+    if (deviceId) {
+      next.device_id = deviceId;
+    } else {
+      delete next.device_id;
+    }
+    this._config = next;
 
     if (!deviceId) {
       this._fireChanged();
@@ -151,13 +163,13 @@ export class NightscoutCardEditor extends LitElement {
     this._fireChanged();
   }
 
-  private _toggleChanged(field: string, e: Event) {
+  private _toggleChanged(field: VisibleFieldKey, e: Event) {
     const checked = (e.target as HTMLInputElement).checked;
     this._config = { ...this._config, [field]: checked };
     this._fireChanged();
   }
 
-  private _numberChanged(field: string, e: Event) {
+  private _numberChanged(field: NumberFieldKey, e: Event) {
     const val = Number((e.target as HTMLInputElement).value);
     if (!isNaN(val)) {
       this._config = { ...this._config, [field]: val };
@@ -165,16 +177,27 @@ export class NightscoutCardEditor extends LitElement {
     }
   }
 
-  private _colorChanged(field: string, e: Event) {
+  private _colorChanged(field: ColorFieldKey, e: Event) {
     const val = (e.target as HTMLInputElement).value;
     this._config = { ...this._config, [field]: val };
     this._fireChanged();
   }
 
-  private _textChanged(field: string, e: Event) {
+  private _textChanged(field: TextFieldKey, e: Event) {
     const val = (e.target as HTMLInputElement).value;
-    this._config = { ...this._config, [field]: val };
+    const next = { ...this._config };
+    if (val) {
+      next[field] = val;
+    } else {
+      delete next[field];
+    }
+    this._config = next;
     this._fireChanged();
+  }
+
+  private _entityValue(key: (typeof ENTITY_KEYS)[number]): string {
+    const field = `${key}_entity` as EntityFieldKey;
+    return this._config[field] ?? "";
   }
 
   private _renderSitePicker(sites: NightscoutSite[], deviceId: string | undefined) {
@@ -231,7 +254,7 @@ export class NightscoutCardEditor extends LitElement {
                   <input
                     type="checkbox"
                     data-testid="toggle-${key}"
-                    .checked=${(c as unknown as Record<string, unknown>)[key] !== false}
+                    .checked=${c[key] !== false}
                     @change=${(e: Event) => this._toggleChanged(key, e)}
                   />
                   ${label}
@@ -347,7 +370,7 @@ export class NightscoutCardEditor extends LitElement {
                     type="text"
                     class="field-input"
                     data-testid="entity-${key}"
-                    .value=${(c as unknown as Record<string, string>)[`${key}_entity`] || ""}
+                    .value=${this._entityValue(key)}
                     @change=${(e: Event) => this._textChanged(`${key}_entity`, e)}
                     placeholder="sensor.example_${key}"
                   />

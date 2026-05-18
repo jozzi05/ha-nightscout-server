@@ -47,7 +47,7 @@ export function registerHaDevicePickerStub(): void {
       for (const [id, label] of [
         ["", "None"],
         ["dev-nightscout-1", "Nightscout"],
-      ]) {
+      ] as const) {
         const option = document.createElement("option");
         option.value = id;
         option.textContent = label;
@@ -107,8 +107,8 @@ export function createMockHass(
 
   return {
     states: fullStates,
-    devices: options.devices,
-    entities: options.entities,
+    ...(options.devices !== undefined ? { devices: options.devices } : {}),
+    ...(options.entities !== undefined ? { entities: options.entities } : {}),
     callWS:
       options.callWS ??
       (async () => {

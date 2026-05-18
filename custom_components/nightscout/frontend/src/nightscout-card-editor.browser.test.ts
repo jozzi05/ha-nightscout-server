@@ -63,7 +63,11 @@ async function mountEditor({ config = {}, hass, callWS, devices, entities }: Mou
   const editor = document.createElement("nightscout-card-editor") as NightscoutCardEditor;
   editor.setConfig(editorConfig(config));
   if (hass !== null) {
-    editor.hass = createMockHass(hass, { callWS, devices, entities });
+    editor.hass = createMockHass(hass, {
+      ...(callWS !== undefined ? { callWS } : {}),
+      ...(devices !== undefined ? { devices } : {}),
+      ...(entities !== undefined ? { entities } : {}),
+    });
   }
   document.body.appendChild(editor);
   await editor.updateComplete;
