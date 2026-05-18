@@ -172,6 +172,8 @@ class NightscoutSensor(CoordinatorEntity[NightscoutCoordinator], SensorEntity):
         self._value_fn = value_fn
         self._available_fn = available_fn
         self._attr_unique_id = f"{entry.unique_id}_{description.key}"
+        # Short slug (e.g. `_iob`) for entity_id; translation_key still drives UI labels.
+        self._attr_name = description.key
 
     @property
     def native_unit_of_measurement(self) -> str | None:

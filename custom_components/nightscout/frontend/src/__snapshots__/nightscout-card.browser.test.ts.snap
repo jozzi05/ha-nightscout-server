@@ -1,0 +1,5 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`NightscoutCard (browser) > matches DOM snapshot 1`] = `
+- text: 120 → Δ +5 mg/dL IOB1.2 COB15
+`;
