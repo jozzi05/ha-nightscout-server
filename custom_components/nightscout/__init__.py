@@ -28,6 +28,12 @@ CARD_URL_BASE = f"/{DOMAIN}"
 CARD_URL = f"{CARD_URL_BASE}/{CARD_JS}"
 _FRONTEND_REGISTERED = False
 
+import json as _json
+
+_MANIFEST_VERSION = _json.loads(
+    (Path(__file__).parent / "manifest.json").read_text()
+).get("version", "0.0.0")
+
 
 async def async_setup(hass: HomeAssistant, config: dict[str, Any]) -> bool:
     """Set up Nightscout."""
@@ -45,13 +51,13 @@ async def _async_register_frontend(hass: HomeAssistant) -> None:
         _LOGGER.debug("Nightscout card JS not found at %s, skipping", js_path)
         return
 
-    hass.http.register_static_path(CARD_URL, str(js_path), cache_headers=False)
+    from homeassistant.components.http import StaticPathConfig
 
-    import json
+    await hass.http.async_register_static_paths(
+        [StaticPathConfig(CARD_URL, str(js_path), False)]
+    )
 
-    manifest_path = Path(__file__).parent / "manifest.json"
-    version = json.loads(manifest_path.read_text()).get("version", "0.0.0")
-    url_with_version = f"{CARD_URL}?v={version}"
+    url_with_version = f"{CARD_URL}?v={_MANIFEST_VERSION}"
 
     lovelace = hass.data.get("lovelace")
     if lovelace and hasattr(lovelace, "resources"):
