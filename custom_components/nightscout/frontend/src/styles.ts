@@ -14,7 +14,7 @@ export const cardStyles = css`
   }
 
   ha-card.blink {
-    animation: glucose-blink 2s ease-in-out;
+    animation: glucose-blink 5s ease-in;
   }
 
   @keyframes glucose-blink {

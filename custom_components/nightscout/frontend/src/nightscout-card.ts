@@ -99,7 +99,9 @@ export class NightscoutCard extends LitElement {
   render() {
     if (!this._config || !this.hass) {
       return html`<ha-card
-        ><div class="ns-not-available">Nightscout card not configured</div></ha-card
+        ><div class="ns-not-available" data-testid="not-configured">
+          Nightscout card not configured
+        </div></ha-card
       >`;
     }
 
@@ -136,6 +138,7 @@ export class NightscoutCard extends LitElement {
           ${c.show_glucose && glucoseVal != null
             ? html`<span
                 class="ns-glucose"
+                data-testid="glucose-value"
                 style="font-size:${fontSize}px; color:${valueColor ?? "inherit"}"
                 >${glucoseVal}</span
               >`
@@ -143,12 +146,16 @@ export class NightscoutCard extends LitElement {
           ${c.show_glucose && arrow
             ? html`<span
                 class="ns-arrow"
+                data-testid="direction-arrow"
                 style="font-size:${Math.round(fontSize * 0.6)}px; color:${valueColor ?? "inherit"}"
                 >${arrow}</span
               >`
             : nothing}
           ${c.show_delta && deltaVal != null
-            ? html`<span class="ns-secondary" style="font-size:${secondarySize}px"
+            ? html`<span
+                class="ns-secondary"
+                data-testid="delta"
+                style="font-size:${secondarySize}px"
                 >Δ
                 ${Number(deltaVal) >= 0 ? "+" : ""}${deltaVal}${deltaUnit
                   ? ` ${deltaUnit}`
@@ -156,18 +163,18 @@ export class NightscoutCard extends LitElement {
               >`
             : nothing}
           ${c.show_iob && iobVal != null
-            ? html`<span class="ns-secondary" style="font-size:${secondarySize}px"
+            ? html`<span class="ns-secondary" data-testid="iob" style="font-size:${secondarySize}px"
                 ><span class="ns-label">IOB</span>${iobVal}</span
               >`
             : nothing}
           ${c.show_cob && cobVal != null
-            ? html`<span class="ns-secondary" style="font-size:${secondarySize}px"
+            ? html`<span class="ns-secondary" data-testid="cob" style="font-size:${secondarySize}px"
                 ><span class="ns-label">COB</span>${cobVal}</span
               >`
             : nothing}
         </div>
         ${c.show_time_ago && lastReadingState
-          ? html`<div class="ns-time-ago" style="font-size:${timeAgoSize}px">
+          ? html`<div class="ns-time-ago" data-testid="time-ago" style="font-size:${timeAgoSize}px">
               ${formatTimeAgo(lastReadingState.state)}
             </div>`
           : nothing}

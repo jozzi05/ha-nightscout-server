@@ -10,3 +10,5 @@ tmp/
 # Frontend build tooling
 custom_components/nightscout/frontend/node_modules/
 custom_components/nightscout/frontend/dist/
+custom_components/nightscout/frontend/test-results/
+custom_components/nightscout/frontend/src/__screenshots__/
