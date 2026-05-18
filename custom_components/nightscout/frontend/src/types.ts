@@ -58,6 +58,7 @@ export interface HassEntityRegistryDisplay {
   device_id?: string | null;
   platform?: string;
   unique_id?: string;
+  translation_key?: string | null;
 }
 
 export interface DeviceRegistryEntry {
@@ -72,4 +73,5 @@ export interface EntityRegistryEntry {
   device_id: string;
   unique_id: string;
   platform: string;
+  translation_key?: string | null;
 }

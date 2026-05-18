@@ -1,10 +1,16 @@
 import { LitElement, html } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
+import {
+  findNightscoutSensor,
+  matchesNightscoutSensorKey,
+  NIGHTSCOUT_SENSOR_KEYS,
+  type NightscoutSensorKey,
+} from "./entity-keys.js";
 import { editorStyles } from "./styles.js";
 import type { EntityRegistryEntry, HomeAssistant, NightscoutCardConfig } from "./types.js";
 import { DEFAULT_CONFIG } from "./types.js";
 
-const ENTITY_KEYS = ["glucose", "delta", "iob", "cob", "last_reading"] as const;
+const ENTITY_KEYS = NIGHTSCOUT_SENSOR_KEYS;
 const NIGHTSCOUT_DOMAIN = "nightscout";
 
 const ENTITY_LABELS: Record<(typeof ENTITY_KEYS)[number], string> = {
@@ -26,7 +32,7 @@ const VISIBLE_FIELDS = [
 type VisibleFieldKey = (typeof VISIBLE_FIELDS)[number][0];
 type NumberFieldKey = "font_size" | "urgent_low" | "urgent_high" | "low" | "high";
 type ColorFieldKey = "color_urgent" | "color_warning" | "color_ok";
-type EntityFieldKey = `${(typeof ENTITY_KEYS)[number]}_entity`;
+type EntityFieldKey = `${NightscoutSensorKey}_entity`;
 type TextFieldKey = EntityFieldKey | "background_color";
 
 type NightscoutSite = { deviceId: string; label: string };
@@ -80,6 +86,7 @@ export class NightscoutCardEditor extends LitElement {
         device_id: ent.device_id!,
         platform: ent.platform!,
         unique_id: ent.unique_id ?? "",
+        translation_key: ent.translation_key,
       }));
   }
 
@@ -103,7 +110,7 @@ export class NightscoutCardEditor extends LitElement {
     const glucoseByDevice = new Map<string, EntityRegistryEntry>();
     for (const ent of registry) {
       if (ent.platform !== NIGHTSCOUT_DOMAIN || !ent.device_id) continue;
-      if (!ent.entity_id.endsWith("_glucose") && !ent.unique_id.endsWith("_glucose")) continue;
+      if (!matchesNightscoutSensorKey(ent, "glucose")) continue;
       glucoseByDevice.set(ent.device_id, ent);
     }
 
@@ -128,9 +135,7 @@ export class NightscoutCardEditor extends LitElement {
     );
     const patch: Partial<NightscoutCardConfig> = {};
     for (const key of ENTITY_KEYS) {
-      const match = deviceEntities.find(
-        (e) => e.entity_id.endsWith(`_${key}`) || e.unique_id.endsWith(`_${key}`),
-      );
+      const match = findNightscoutSensor(deviceEntities, key);
       if (match) {
         (patch as Record<string, string>)[`${key}_entity`] = match.entity_id;
       }
@@ -195,7 +200,7 @@ export class NightscoutCardEditor extends LitElement {
     this._fireChanged();
   }
 
-  private _entityValue(key: (typeof ENTITY_KEYS)[number]): string {
+  private _entityValue(key: NightscoutSensorKey): string {
     const field = `${key}_entity` as EntityFieldKey;
     return this._config[field] ?? "";
   }

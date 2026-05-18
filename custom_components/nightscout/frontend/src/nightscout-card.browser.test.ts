@@ -4,17 +4,22 @@ import "./nightscout-card.js";
 import { NightscoutCard } from "./nightscout-card.js";
 import type { NightscoutCardConfig } from "./types.js";
 import { DEFAULT_CONFIG } from "./types.js";
-import { createMockHass, MOCK_ENTITIES, registerHaCardStub } from "./test-helpers/ha-stubs.js";
+import {
+  createMockHass,
+  MOCK_ENTITIES,
+  MOCK_ENTITY_IDS,
+  registerHaCardStub,
+} from "./test-helpers/ha-stubs.js";
 
 function baseConfig(overrides: Partial<NightscoutCardConfig> = {}): NightscoutCardConfig {
   return {
     type: "custom:nightscout-card",
     ...DEFAULT_CONFIG,
-    glucose_entity: "sensor.nightscout_glucose",
-    delta_entity: "sensor.nightscout_delta",
-    iob_entity: "sensor.nightscout_iob",
-    cob_entity: "sensor.nightscout_cob",
-    last_reading_entity: "sensor.nightscout_last_reading",
+    glucose_entity: MOCK_ENTITY_IDS.glucose,
+    delta_entity: MOCK_ENTITY_IDS.delta,
+    iob_entity: MOCK_ENTITY_IDS.iob,
+    cob_entity: MOCK_ENTITY_IDS.cob,
+    last_reading_entity: MOCK_ENTITY_IDS.last_reading,
     ...overrides,
   };
 }
@@ -23,11 +28,11 @@ type HassStates = Parameters<typeof createMockHass>[0];
 
 function hassStates(overrides: HassStates = {}): HassStates {
   return {
-    "sensor.nightscout_glucose": MOCK_ENTITIES.glucose(),
-    "sensor.nightscout_delta": MOCK_ENTITIES.delta(),
-    "sensor.nightscout_iob": MOCK_ENTITIES.iob(),
-    "sensor.nightscout_cob": MOCK_ENTITIES.cob(),
-    "sensor.nightscout_last_reading": MOCK_ENTITIES.lastReading(),
+    [MOCK_ENTITY_IDS.glucose]: MOCK_ENTITIES.glucose(),
+    [MOCK_ENTITY_IDS.delta]: MOCK_ENTITIES.delta(),
+    [MOCK_ENTITY_IDS.iob]: MOCK_ENTITIES.iob(),
+    [MOCK_ENTITY_IDS.cob]: MOCK_ENTITIES.cob(),
+    [MOCK_ENTITY_IDS.last_reading]: MOCK_ENTITIES.lastReading(),
     ...overrides,
   };
 }
@@ -99,7 +104,7 @@ describe("NightscoutCard (browser)", () => {
   it("applies glucose color from raw_mgdl", async () => {
     await mountCard({
       hass: hassStates({
-        "sensor.nightscout_glucose": MOCK_ENTITIES.glucose({
+        [MOCK_ENTITY_IDS.glucose]: MOCK_ENTITIES.glucose({
           state: "55",
           attributes: { direction: "SingleDown", raw_mgdl: 55 },
         }),

@@ -17,36 +17,36 @@ exports[`NightscoutCardEditor (browser) > matches DOM snapshot 1`] = `
 - checkbox "COB" [checked]
 - text: COB
 - heading "Font size" [level=3]
-- slider: "48"
+- slider: 48
 - text: 48px
 - heading "Glucose ranges (mg/dL)" [level=3]
 - text: Urgent low
-- spinbutton "Urgent low": "70"
+- spinbutton "Urgent low": 70
 - text: Low
-- spinbutton "Low": "85"
+- spinbutton "Low": 85
 - text: High
-- spinbutton "High": "170"
+- spinbutton "High": 170
 - text: Urgent high
-- spinbutton "Urgent high": "200"
+- spinbutton "Urgent high": 200
 - heading "Colors" [level=3]
 - text: Urgent
-- textbox "Urgent": "#e74c3c"
+- textbox "Urgent": #e74c3c
 - text: Warning
-- textbox "Warning": "#f39c12"
+- textbox "Warning": #f39c12
 - text: OK
-- textbox "OK": "#2ecc71"
+- textbox "OK": #2ecc71
 - heading "Entity overrides" [level=3]
 - paragraph: Filled automatically when you select a site. Edit only if needed.
 - text: Glucose
-- textbox "sensor.example_glucose": sensor.nightscout_glucose
+- textbox "sensor.example_glucose": sensor.nightscout_example_com_glucose
 - text: Delta
-- textbox "sensor.example_delta": sensor.nightscout_delta
+- textbox "sensor.example_delta": sensor.nightscout_example_com_delta
 - text: IOB
-- textbox "sensor.example_iob": sensor.nightscout_iob
+- textbox "sensor.example_iob": sensor.nightscout_example_com_iob
 - text: COB
-- textbox "sensor.example_cob": sensor.nightscout_cob
+- textbox "sensor.example_cob": sensor.nightscout_example_com_cob
 - text: Last reading
-- textbox "sensor.example_last_reading": sensor.nightscout_last_reading
+- textbox "sensor.example_last_reading": sensor.nightscout_example_com_last_reading
 - heading "Background" [level=3]
 - text: Card background
 - textbox "Leave empty for theme default"

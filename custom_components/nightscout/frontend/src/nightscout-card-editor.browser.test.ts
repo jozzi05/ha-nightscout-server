@@ -7,6 +7,7 @@ import { DEFAULT_CONFIG } from "./types.js";
 import {
   createMockHass,
   type CreateMockHassOptions,
+  MOCK_ENTITY_IDS,
   MOCK_ENTITY_REGISTRY,
   MOCK_ENTITIES,
   mockNightscoutRegistry,
@@ -24,11 +25,11 @@ type HassStates = Parameters<typeof createMockHass>[0];
 
 function hassStates(overrides: HassStates = {}): HassStates {
   return {
-    "sensor.nightscout_glucose": MOCK_ENTITIES.glucose(),
-    "sensor.nightscout_delta": MOCK_ENTITIES.delta(),
-    "sensor.nightscout_iob": MOCK_ENTITIES.iob(),
-    "sensor.nightscout_cob": MOCK_ENTITIES.cob(),
-    "sensor.nightscout_last_reading": MOCK_ENTITIES.lastReading(),
+    [MOCK_ENTITY_IDS.glucose]: MOCK_ENTITIES.glucose(),
+    [MOCK_ENTITY_IDS.delta]: MOCK_ENTITIES.delta(),
+    [MOCK_ENTITY_IDS.iob]: MOCK_ENTITIES.iob(),
+    [MOCK_ENTITY_IDS.cob]: MOCK_ENTITIES.cob(),
+    [MOCK_ENTITY_IDS.last_reading]: MOCK_ENTITIES.lastReading(),
     ...overrides,
   };
 }
@@ -136,11 +137,11 @@ describe("NightscoutCardEditor (browser)", () => {
 
     const config = lastEmittedConfig(onConfigChanged);
     expect(config.device_id).toBe("dev-nightscout-1");
-    expect(config.glucose_entity).toBe("sensor.nightscout_glucose");
-    expect(config.delta_entity).toBe("sensor.nightscout_delta");
-    expect(config.iob_entity).toBe("sensor.nightscout_iob");
-    expect(config.cob_entity).toBe("sensor.nightscout_cob");
-    expect(config.last_reading_entity).toBe("sensor.nightscout_last_reading");
+    expect(config.glucose_entity).toBe(MOCK_ENTITY_IDS.glucose);
+    expect(config.delta_entity).toBe(MOCK_ENTITY_IDS.delta);
+    expect(config.iob_entity).toBe(MOCK_ENTITY_IDS.iob);
+    expect(config.cob_entity).toBe(MOCK_ENTITY_IDS.cob);
+    expect(config.last_reading_entity).toBe(MOCK_ENTITY_IDS.last_reading);
   });
 
   it("maps entities via callWS when hass.entities is not populated", async () => {
@@ -159,7 +160,7 @@ describe("NightscoutCardEditor (browser)", () => {
     await expect.element(page.getByTestId("device-picker")).toBeInTheDocument();
     await page.getByTestId("device-picker").selectOptions("dev-nightscout-1");
 
-    expect(lastEmittedConfig(onConfigChanged).glucose_entity).toBe("sensor.nightscout_glucose");
+    expect(lastEmittedConfig(onConfigChanged).glucose_entity).toBe(MOCK_ENTITY_IDS.glucose);
   });
 
   it("matches DOM snapshot", async () => {
@@ -170,11 +171,11 @@ describe("NightscoutCardEditor (browser)", () => {
       entities,
       config: {
         device_id: "dev-nightscout-1",
-        glucose_entity: "sensor.nightscout_glucose",
-        delta_entity: "sensor.nightscout_delta",
-        iob_entity: "sensor.nightscout_iob",
-        cob_entity: "sensor.nightscout_cob",
-        last_reading_entity: "sensor.nightscout_last_reading",
+        glucose_entity: MOCK_ENTITY_IDS.glucose,
+        delta_entity: MOCK_ENTITY_IDS.delta,
+        iob_entity: MOCK_ENTITY_IDS.iob,
+        cob_entity: MOCK_ENTITY_IDS.cob,
+        last_reading_entity: MOCK_ENTITY_IDS.last_reading,
       },
     });
 

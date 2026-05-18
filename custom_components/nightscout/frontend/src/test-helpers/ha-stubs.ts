@@ -1,3 +1,4 @@
+import type { NightscoutSensorKey } from "../entity-keys.js";
 import type {
   DeviceRegistryEntry,
   EntityRegistryEntry,
@@ -5,6 +6,9 @@ import type {
   HassEntityRegistryDisplay,
   HomeAssistant,
 } from "../types.js";
+
+/** Config-entry unique_id base (URL host), matching `config_flow.py`. */
+export const MOCK_SITE_UNIQUE_BASE = "nightscout.example.com";
 
 export function registerHaCardStub(): void {
   if (customElements.get("ha-card")) return;
@@ -129,6 +133,7 @@ export function mockNightscoutRegistry(
       device_id: deviceId,
       platform: "nightscout",
       unique_id: entry.unique_id,
+      translation_key: entry.translation_key,
     };
   }
   return {
@@ -143,38 +148,48 @@ export function mockNightscoutRegistry(
   };
 }
 
+/** Entity IDs use `{site_slug}_{sensor.key}`; unique_ids use `{site}_{sensor.key}` from sensor.py. */
 export const MOCK_ENTITY_REGISTRY: EntityRegistryEntry[] = [
   {
-    entity_id: "sensor.nightscout_glucose",
+    entity_id: "sensor.nightscout_example_com_glucose",
     device_id: "dev-nightscout-1",
-    unique_id: "nightscout_glucose",
+    unique_id: `${MOCK_SITE_UNIQUE_BASE}_glucose`,
+    translation_key: "glucose",
     platform: "nightscout",
   },
   {
-    entity_id: "sensor.nightscout_delta",
+    entity_id: "sensor.nightscout_example_com_delta",
     device_id: "dev-nightscout-1",
-    unique_id: "nightscout_delta",
+    unique_id: `${MOCK_SITE_UNIQUE_BASE}_delta`,
+    translation_key: "delta",
     platform: "nightscout",
   },
   {
-    entity_id: "sensor.nightscout_iob",
+    entity_id: "sensor.nightscout_example_com_iob",
     device_id: "dev-nightscout-1",
-    unique_id: "nightscout_iob",
+    unique_id: `${MOCK_SITE_UNIQUE_BASE}_iob`,
+    translation_key: "iob",
     platform: "nightscout",
   },
   {
-    entity_id: "sensor.nightscout_cob",
+    entity_id: "sensor.nightscout_example_com_cob",
     device_id: "dev-nightscout-1",
-    unique_id: "nightscout_cob",
+    unique_id: `${MOCK_SITE_UNIQUE_BASE}_cob`,
+    translation_key: "cob",
     platform: "nightscout",
   },
   {
-    entity_id: "sensor.nightscout_last_reading",
+    entity_id: "sensor.nightscout_example_com_last_reading",
     device_id: "dev-nightscout-1",
-    unique_id: "nightscout_last_reading",
+    unique_id: `${MOCK_SITE_UNIQUE_BASE}_last_reading`,
+    translation_key: "last_reading",
     platform: "nightscout",
   },
 ];
+
+export const MOCK_ENTITY_IDS = Object.fromEntries(
+  MOCK_ENTITY_REGISTRY.map((entry) => [entry.translation_key!, entry.entity_id]),
+) as Record<NightscoutSensorKey, string>;
 
 export const MOCK_ENTITIES = {
   glucose: (overrides: Partial<HassEntity> = {}) =>
