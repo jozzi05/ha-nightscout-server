@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from "vitest";
-import { page } from "@vitest/browser/context";
+import { page } from "vitest/browser";
 import "./nightscout-card.js";
 import { NightscoutCard } from "./nightscout-card.js";
 import type { NightscoutCardConfig } from "./types.js";

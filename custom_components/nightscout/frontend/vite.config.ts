@@ -1,4 +1,5 @@
 /// <reference types="vitest/config" />
+import { playwright } from "@vitest/browser-playwright";
 import { defineConfig } from "vite";
 import { resolve } from "path";
 import { copyFileSync } from "fs";
@@ -15,19 +16,14 @@ export default defineConfig({
     },
     outDir: "dist",
     emptyOutDir: true,
-    minify: "terser",
-    terserOptions: {
-      format: { comments: false },
-    },
+    minify: "oxc",
   },
   plugins: [
     {
       name: "copy-to-parent",
       closeBundle() {
-        copyFileSync(
-          resolve(__dirname, "dist/nightscout-card.js"),
-          resolve(__dirname, "../nightscout-card.js"),
-        );
+        const built = resolve(__dirname, "dist/nightscout-card.js");
+        copyFileSync(built, resolve(__dirname, "../nightscout-card.js"));
       },
     },
   ],
@@ -46,7 +42,7 @@ export default defineConfig({
           name: "browser",
           browser: {
             enabled: true,
-            provider: "playwright",
+            provider: playwright(),
             headless: true,
             instances: [{ browser: "chromium" }],
           },
