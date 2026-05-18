@@ -81,7 +81,7 @@ describe("NightscoutCardEditor (browser)", () => {
     await mountEditor({ hass: states, devices, entities });
 
     await expect.element(page.getByTestId("editor")).toBeInTheDocument();
-    await expect.element(page.getByTestId("devsice-picker")).toBeInTheDocument();
+    await expect.element(page.getByTestId("device-picker")).toBeInTheDocument();
     await expect.element(page.getByText("nightscout.example.com")).toBeInTheDocument();
     await expect.element(page.getByTestId("toggle-show_glucose")).toBeChecked();
   });
@@ -156,6 +156,26 @@ describe("NightscoutCardEditor (browser)", () => {
     await page.getByTestId("device-picker").selectOptions("dev-nightscout-1");
 
     expect(lastEmittedConfig(onConfigChanged).glucose_entity).toBe("sensor.nightscout_glucose");
+  });
+
+  it("matches DOM snapshot", async () => {
+    const { states, devices, entities } = hassWithNightscout();
+    const editor = await mountEditor({
+      hass: states,
+      devices,
+      entities,
+      config: {
+        device_id: "dev-nightscout-1",
+        glucose_entity: "sensor.nightscout_glucose",
+        delta_entity: "sensor.nightscout_delta",
+        iob_entity: "sensor.nightscout_iob",
+        cob_entity: "sensor.nightscout_cob",
+        last_reading_entity: "sensor.nightscout_last_reading",
+      },
+    });
+
+    await expect.element(page.getByTestId("editor")).toBeInTheDocument();
+    await expect.element(page.elementLocator(editor)).toMatchAriaSnapshot();
   });
 
   it("emits config-changed when an entity override is edited", async () => {

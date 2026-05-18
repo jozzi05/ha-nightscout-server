@@ -1,0 +1,53 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`NightscoutCardEditor (browser) > matches DOM snapshot 1`] = `
+- heading "Nightscout site" [level=3]
+- combobox:
+  - option "Select a site"
+  - option "nightscout.example.com" [selected]
+- heading "Visible fields" [level=3]
+- checkbox "Glucose" [checked]
+- text: Glucose
+- checkbox "Time ago" [checked]
+- text: Time ago
+- checkbox "Delta" [checked]
+- text: Delta
+- checkbox "IOB" [checked]
+- text: IOB
+- checkbox "COB" [checked]
+- text: COB
+- heading "Font size" [level=3]
+- slider: "48"
+- text: 48px
+- heading "Glucose ranges (mg/dL)" [level=3]
+- text: Urgent low
+- spinbutton "Urgent low": "70"
+- text: Low
+- spinbutton "Low": "85"
+- text: High
+- spinbutton "High": "170"
+- text: Urgent high
+- spinbutton "Urgent high": "200"
+- heading "Colors" [level=3]
+- text: Urgent
+- textbox "Urgent": "#e74c3c"
+- text: Warning
+- textbox "Warning": "#f39c12"
+- text: OK
+- textbox "OK": "#2ecc71"
+- heading "Entity overrides" [level=3]
+- paragraph: Filled automatically when you select a site. Edit only if needed.
+- text: Glucose
+- textbox "sensor.example_glucose": sensor.nightscout_glucose
+- text: Delta
+- textbox "sensor.example_delta": sensor.nightscout_delta
+- text: IOB
+- textbox "sensor.example_iob": sensor.nightscout_iob
+- text: COB
+- textbox "sensor.example_cob": sensor.nightscout_cob
+- text: Last reading
+- textbox "sensor.example_last_reading": sensor.nightscout_last_reading
+- heading "Background" [level=3]
+- text: Card background
+- textbox "Leave empty for theme default"
+`;

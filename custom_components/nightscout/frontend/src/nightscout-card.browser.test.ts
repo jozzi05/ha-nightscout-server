@@ -87,6 +87,15 @@ describe("NightscoutCard (browser)", () => {
     await expect.element(page.getByTestId("cob")).not.toBeInTheDocument();
   });
 
+  it("matches DOM snapshot", async () => {
+    const card = await mountCard({
+      hass: hassStates(),
+      config: { show_time_ago: false },
+    });
+
+    await expect.element(page.elementLocator(card)).toMatchAriaSnapshot();
+  });
+
   it("applies glucose color from raw_mgdl", async () => {
     await mountCard({
       hass: hassStates({

@@ -12,6 +12,7 @@
     "test": "vitest run",
     "test:unit": "vitest run --project unit",
     "test:browser": "vitest run --project browser",
+    "test:update-snapshots": "vitest run --project browser -u",
     "test:watch": "vitest"
   },
   "dependencies": {
