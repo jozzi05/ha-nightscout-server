@@ -40,6 +40,8 @@ export const DEFAULT_CONFIG: Omit<NightscoutCardConfig, "type"> = {
 
 export interface HomeAssistant {
   states: Record<string, HassEntity>;
+  devices?: Record<string, DeviceRegistryEntry>;
+  entities?: Record<string, HassEntityRegistryDisplay>;
   callWS: <T>(msg: Record<string, unknown>) => Promise<T>;
 }
 
@@ -51,10 +53,18 @@ export interface HassEntity {
   last_updated: string;
 }
 
+export interface HassEntityRegistryDisplay {
+  entity_id: string;
+  device_id?: string | null;
+  platform?: string;
+  unique_id?: string;
+}
+
 export interface DeviceRegistryEntry {
   id: string;
-  identifiers: [string, string][];
-  name: string;
+  identifiers?: [string, string][];
+  name?: string;
+  name_by_user?: string | null;
 }
 
 export interface EntityRegistryEntry {
